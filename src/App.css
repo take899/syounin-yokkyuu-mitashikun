@@ -21,20 +21,61 @@
   opacity: 0;
   transition: all .2s ease;
 }
-.__modal-menu > .__card {
-  transform: scale(.95);
+.__modal-menu > div > .__card {
+  background-color: rgb(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  transform: scale(.6);
   transition: all .2s ease;
 }
 .__modal-menu.__is-active {
   visibility: visible;
   opacity: 1;
 }
-.__modal-menu.__is-active > .__card {
+.__modal-menu.__is-active > div > .__card {
+  transform: scale(1);
+}
+
+.__notification {
+  z-index: 10;
+  visibility: hidden;
+  opacity: 0;
+}
+.__notification > div > .__card {
+  background-color: rgb(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  transform: scale(.6);
+  margin-bottom: -100px;
+  transition: all 0.4s cubic-bezier(.36,.98,.31,1.07);
+  
+}
+.__notification.__is-active {
+  visibility: visible;
+  opacity: 1;
+}
+.__notification.__is-active > div > .__card {
+  margin-bottom: 0px;
+  transform: scale(1);
+}
+.__notification.__is-fadeout {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 1s cubic-bezier(.36,.98,.31,1.07);
+}
+.__notification.__is-fadeout > div > .__card {
+  margin-bottom: 0px;
   transform: scale(1);
 }
 
 .__bg-blur {
+  z-index: 20;
   background-color: rgba(0, 0, 0, 0.2);
- -webkit-backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
   backdrop-filter: blur(1px);
+}
+
+.__bg-twitter-icon {
+  background-color: #1da1f2;
 }

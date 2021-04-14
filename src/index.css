@@ -16,6 +16,6 @@ code {
     monospace;
 }
 
-button {
+button:focus {
   outline: none;
 }

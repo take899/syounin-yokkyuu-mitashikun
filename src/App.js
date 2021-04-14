@@ -1,10 +1,9 @@
-
-
-import React, { Component, useEffect, useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
+import React, { useEffect, useState } from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import uuid from 'uuid';
 import './App.css';
 
-const ModalMenu = ({ show, children }) => (
+const ModalMenu = ({ show, setModalMenu }) => (
   <CSSTransition
     in={show}
     timeout={200}
@@ -19,10 +18,147 @@ const ModalMenu = ({ show, children }) => (
     }}
   >
     <div>
-      {children}
+      <div
+        className="absolute w-full h-full opacity-0"
+        onClick={() => setModalMenu(false)}
+      />
+      <div className="absolute w-full px-2 top-72">
+        <div className="max-w-screen-sm p-5 m-auto rounded-xl __card">
+          <div>モーダルを開きました</div>
+          <button onClick={() => setModalMenu(false)}>閉じる</button>
+        </div>
+      </div>
     </div>
   </CSSTransition>
 );
+
+const Notification = ({ show, setNotification, name, content }) => (
+  <CSSTransition
+    in={show}
+    timeout={200}
+    unmountOnExit
+    classNames={{
+      enter: '__notification',
+      enterActive: '__notification __is-active',
+      enterDone: '__notification __is-active',
+      exit: '__notification __is-fadeout',
+      exitActive: '__notification __is-fadeout',
+      exitDone: '__notification __is-fadeout',
+    }}
+  >
+    <div>
+      <div
+        className="absolute w-full h-full opacity-0"
+        onClick={() => setNotification(false)}
+      />
+      <div className="absolute w-full px-2 top-64">
+        <div className="max-w-screen-sm p-3 m-auto rounded-xl __card">
+          <div className="flex justify-between">
+            <div className="flex">
+              <div className="w-6 p-1 rounded-md __bg-twitter-icon"><TwitterIcon fill='white'/></div>
+              <div className="ml-2 font-normal text-black text-opacity-50">TWITEER</div>
+            </div>
+            <div className="text-black text-opacity-40">今</div>
+          </div>
+            <div className="mt-3 font-extrabold">{name}さんがいいねしました：</div>
+            <div className="font-thin">{content}</div>
+        </div>
+      </div>
+    </div>
+  </CSSTransition>
+);
+
+const Notifications = ({ notificationList, setNotificationList, timeoutIdList }) => (
+  <React.Fragment>
+    <CSSTransition
+      in={notificationList.length ? true : false}
+      timeout={0}
+      unmountOnExit
+      classNames={'bg-notification'}
+    >
+      <div
+        className="fixed top-0 bottom-0 left-0 right-0 z-30 w-screen h-screen opacity-0"
+        onClick={() => {
+          timeoutIdList.forEach(clearTimeout);
+          setNotificationList([]);
+        }}
+      />
+    </CSSTransition>
+    <TransitionGroup className="fixed left-0 right-0 flex flex-col-reverse top-64">
+      {notificationList.map(notification => (
+        <CSSTransition
+          key={notification.id}
+          timeout={1000}
+          unmountOnExit
+          classNames={{
+            enter: '__notification',
+            enterActive: '__notification __is-active',
+            enterDone: '__notification __is-active',
+            exit: '__notification __is-fadeout',
+            exitActive: '__notification __is-fadeout',
+            exitDone: '__notification __is-fadeout',
+          }}
+        >
+          <div>
+            <div className="w-screen px-2 mb-2">
+              <div className="max-w-screen-sm p-3 m-auto rounded-xl __card">
+                <div className="flex justify-between">
+                  <div className="flex">
+                    <div className="w-6 p-1 rounded-md __bg-twitter-icon"><TwitterIcon fill='white'/></div>
+                    <div className="ml-2 font-normal text-black text-opacity-50">TWITEER</div>
+                  </div>
+                  <div className="text-black text-opacity-40">今</div>
+                </div>
+                  <div className="mt-3 font-extrabold">{notification.name}さんが{notification.action}しました：</div>
+                  <div className="font-thin">{notification.content}</div>
+              </div>
+            </div>
+          </div>
+        </CSSTransition>
+      ))}
+    </TransitionGroup>
+  </React.Fragment>
+);
+
+const startNotifications = ({ setNotificationList, setTimeoutIdList }) => {
+  const tweetSize = 1000;
+  const tweets = [];
+  const maxDisplaySize = 5;
+  const names = ['山田', '田中', '井上', '中村', '上田'];
+  const contents = ['申請書のチェックや評価書執筆の季節。学振の様式変更に少し戸惑っている。', '申請書のチェックや評価書執筆の季節。学振の様式変更に少し戸惑っている。', ''];
+  const actions = ['いいね', 'リツイート', 'フォロー'];
+  const timeoutIds = [];
+  let delay = 3000;
+  // const sigmoid = (x) => {
+  //   return (1.0/(1.0 + Math.exp(-x)));
+  // }
+  setNotificationList([]);
+  for (let i=0; i<tweetSize; i++) {
+    let actionId = Math.floor(3 * Math.random(3));
+    tweets.push({ id: uuid(), name: names[i%names.length], action: actions[actionId], content: contents[actionId] });
+  }
+  for (let i=0; i<tweetSize; i++) {
+    let start = i < maxDisplaySize ? 0 : i + 1 - maxDisplaySize;
+    let end = i + 1;
+    let timeoutId = window.setTimeout(() => {
+      setNotificationList(tweets.slice(start, end));
+    }, delay);
+    timeoutIds.push(timeoutId);
+    if (i<5) {
+      delay += 1500;
+    } else if (i>=5 && i<10) {
+      delay += 1000;
+    } else if (i>=10 && i<30) {
+      delay += 500;
+    } else if (i>=30 && i<500) {
+      delay += 200;
+    } else {
+      delay += 100;
+    }
+    // delay += 1000 - 900*sigmoid(-2 + (10*i)/tweetSize);
+  }
+  setTimeoutIdList(timeoutIds);
+};
 
 const TimeDisplay = () => {
   const timeData = () => {
@@ -41,21 +177,24 @@ const TimeDisplay = () => {
       const td = timeData();
       setClockStr(td.clockStr);
       setDateStr(td.dateStr);
-    },1000)
-  }, [])
+    }, 1000)
+  }, []);
   
   return (
-    <React.Fragment>
-      <div className="fixed left-0 w-full top-28">
-        <div className="text-center text-white">
-          <div className="text-7xl font-extralight">{clockStr}</div>
-          <div className="text-xl font-light leading-10">{dateStr}</div>
-        </div>
+    <div className="fixed left-0 w-full top-28">
+      <div className="text-center text-white">
+        <div className="text-7xl font-extralight">{clockStr}</div>
+        <div className="text-xl font-light leading-10">{dateStr}</div>
       </div>
-    </React.Fragment>
+    </div>
   )
 };
 
+const TwitterIcon = ({fill}) => (
+  <svg viewBox="0 0 512 512">
+    <path fill={fill} style={{fillRule: 'evenodd', clipRule: "evenodd"}} d='M496 109.5a201.8 201.8 0 01-56.55 15.3 97.51 97.51 0 0043.33-53.6 197.74 197.74 0 01-62.56 23.5A99.14 99.14 0 00348.31 64c-54.42 0-98.46 43.4-98.46 96.9a93.21 93.21 0 002.54 22.1 280.7 280.7 0 01-203-101.3A95.69 95.69 0 0036 130.4c0 33.6 17.53 63.3 44 80.7A97.5 97.5 0 0135.22 199v1.2c0 47 34 86.1 79 95a100.76 100.76 0 01-25.94 3.4 94.38 94.38 0 01-18.51-1.8c12.51 38.5 48.92 66.5 92.05 67.3A199.59 199.59 0 0139.5 405.6a203 203 0 01-23.5-1.4A278.68 278.68 0 00166.74 448c181.36 0 280.44-147.7 280.44-275.8 0-4.2-.11-8.4-.31-12.5A198.48 198.48 0 00496 109.5z'/>
+  </svg>
+);
 const LockIcon = ({fill}) => (
   <svg viewBox="0 0 46 67">
     <path fill={fill} style={{fillRule: 'evenodd', clipRule: "evenodd"}} d="M34.8,27v-9c0-6.4-5.1-11.5-11.5-11.5h-0.5c-6.4,0-11.5,5.1-11.5,11.5v9H34.8z M41.3,27.1c2.7,0.6,4.7,3,4.7,5.9v27.5c0,3.3-2.7,6-6,6H6c-3.3,0-6-2.7-6-6V33c0-2.9,2-5.3,4.8-5.9V18c0-9.9,8.1-18,18-18h0.5c9.9,0,18,8.1,18,18V27.1z"/>
@@ -74,22 +213,14 @@ const CameraIcon = ({fill}) => (
 
 const App = () => {
   const [modalMenu, setModalMenu] = useState(false);
-  
+  const [notificationList, setNotificationList] = useState([]);
+  const [timeoutIdList, setTimeoutIdList] = useState([]);
+
   return (
     <React.Fragment>
       <div className="__bg-image"></div>
-      <ModalMenu show={modalMenu}>
-        <div
-          className="absolute w-full h-full opacity-0"
-          onClick={() => setModalMenu(false)}
-        />            
-        <div className="absolute w-full __card">
-          <div className="max-w-screen-sm p-5 m-auto bg-gray-100 border-4 border-gray-500 right-6 rounded-2xl">
-            <div>モーダルを開きました</div>
-            <button onClick={() => setModalMenu(false)}>閉じる</button>
-          </div>
-        </div>
-      </ModalMenu>
+      <ModalMenu show={modalMenu} setModalMenu={setModalMenu}/>
+      <Notifications notificationList={notificationList} setNotificationList={setNotificationList} timeoutIdList={timeoutIdList} />
       <div className="fixed left-0 w-full top-16">
         <div className="flex justify-center">
           <button onClick={() => setModalMenu(true)}>
@@ -106,11 +237,13 @@ const App = () => {
               <FlashlightIcon fill="#fff" />
             </div>
           </div>
-          <div className="flex items-center justify-center w-12 h-12 rounded-full __bg-blur">
-            <div style={{ width: '1.2rem' }}>
-              <CameraIcon fill="#fff" />
+          <button onClick={() => startNotifications({ setNotificationList, setTimeoutIdList })}>
+            <div className="flex items-center justify-center w-12 h-12 rounded-full __bg-blur">
+              <div style={{ width: '1.2rem' }}>
+                <CameraIcon fill="#fff" />
+              </div>
             </div>
-          </div>
+          </button>
         </div>
       </div>
       <div className="fixed left-0 w-full top-8">
@@ -121,7 +254,7 @@ const App = () => {
       <div className="fixed left-0 w-full bottom-2">
         <div className="w-32 h-1 m-auto bg-gray-100 rounded-sm"></div>
       </div>
-      <TimeDisplay/>
+      <TimeDisplay />
     </React.Fragment>
   );
 }
