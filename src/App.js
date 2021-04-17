@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import uuid from 'uuid';
+import profileImage from './images/gorilla.jpg';
 import './App.css';
 
 const ModalMenu = ({ show, setModalMenu }) => (
@@ -19,7 +20,7 @@ const ModalMenu = ({ show, setModalMenu }) => (
   >
     <div>
       <div
-        className="absolute w-full h-full opacity-0"
+        className="fixed top-0 bottom-0 left-0 right-0 z-30 w-screen h-screen opacity-0"
         onClick={() => setModalMenu(false)}
       />
       <div className="absolute w-full px-2 top-72">
@@ -31,6 +32,52 @@ const ModalMenu = ({ show, setModalMenu }) => (
     </div>
   </CSSTransition>
 );
+
+const TweetModal = ({ show, setTweetModal, setNotificationList, setTimeoutIdList }) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let tweet = e.target.tweet.value;
+    if (tweet) {
+      startNotifications({ tweet, setNotificationList, setTimeoutIdList });
+      setTweetModal(false);
+    }
+  };
+  return (
+    <CSSTransition
+      in={show}
+      timeout={200}
+      unmountOnExit
+      classNames={{
+        enter: '__modal-menu',
+        enterActive: '__modal-menu __is-active',
+        enterDone: '__modal-menu __is-active',
+        exit: '__modal-menu',
+        exitActive: '__modal-menu',
+        exitDone: '__modal-menu',
+      }}
+    >
+      <div>
+        <div
+          className="fixed top-0 bottom-0 left-0 right-0 w-screen h-screen opacity-0"
+          onClick={() => setTweetModal(false)}
+        />
+        <div className="absolute w-full px-2 top-72">
+          <div className="max-w-screen-sm p-5 m-auto rounded-xl __card">
+            <form onSubmit={handleSubmit}>
+              <div className="flex p-2.5 bg-white rounded-xl">
+                <ProfileImage />
+                <textarea type="text" name="tweet" placeholder="いまどうしてる？" rows="5" className="w-full px-4 py-2 ml-2 bg-white" />
+              </div>
+              <div className="mt-4 text-center">
+                <input type="submit" value="ツイートする(偽)" className="px-6 py-1 font-bold text-white rounded-full __bg-twitter-color" />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </CSSTransition>
+  );
+};
 
 const Notification = ({ show, setNotification, name, content }) => (
   <CSSTransition
@@ -55,7 +102,7 @@ const Notification = ({ show, setNotification, name, content }) => (
         <div className="max-w-screen-sm p-3 m-auto rounded-xl __card">
           <div className="flex justify-between">
             <div className="flex">
-              <div className="w-6 p-1 rounded-md __bg-twitter-icon"><TwitterIcon fill='white'/></div>
+              <div className="w-6 p-1 rounded-md __bg-twitter-color"><TwitterIcon fill='white'/></div>
               <div className="ml-2 font-normal text-black text-opacity-50">TWITEER</div>
             </div>
             <div className="text-black text-opacity-40">今</div>
@@ -85,7 +132,7 @@ const Notifications = ({ notificationList, setNotificationList, timeoutIdList })
       />
     </CSSTransition>
     <TransitionGroup className="fixed left-0 right-0 flex flex-col-reverse top-64">
-      {notificationList.map(notification => (
+      {notificationList && notificationList.map(notification => (
         <CSSTransition
           key={notification.id}
           timeout={1000}
@@ -104,12 +151,12 @@ const Notifications = ({ notificationList, setNotificationList, timeoutIdList })
               <div className="max-w-screen-sm p-3 m-auto rounded-xl __card">
                 <div className="flex justify-between">
                   <div className="flex">
-                    <div className="w-6 p-1 rounded-md __bg-twitter-icon"><TwitterIcon fill='white'/></div>
+                    <div className="w-6 p-1 rounded-md __bg-twitter-color"><TwitterIcon fill='white'/></div>
                     <div className="ml-2 font-normal text-black text-opacity-50">TWITEER</div>
                   </div>
                   <div className="text-black text-opacity-40">今</div>
                 </div>
-                  <div className="mt-3 font-extrabold">{notification.name}さんが{notification.action}しました：</div>
+                  <div className="mt-3 font-extrabold">{notification.name}さん{notification.action}</div>
                   <div className="font-thin">{notification.content}</div>
               </div>
             </div>
@@ -120,13 +167,13 @@ const Notifications = ({ notificationList, setNotificationList, timeoutIdList })
   </React.Fragment>
 );
 
-const startNotifications = ({ setNotificationList, setTimeoutIdList }) => {
+const startNotifications = ({ tweet, setNotificationList, setTimeoutIdList }) => {
   const tweetSize = 1000;
   const tweets = [];
   const maxDisplaySize = 5;
   const names = ['山田', '田中', '井上', '中村', '上田'];
-  const contents = ['申請書のチェックや評価書執筆の季節。学振の様式変更に少し戸惑っている。', '申請書のチェックや評価書執筆の季節。学振の様式変更に少し戸惑っている。', ''];
-  const actions = ['いいね', 'リツイート', 'フォロー'];
+  const contents = [tweet, tweet, ''];
+  const actions = ['がいいねしました：', 'がリツイートしました：', 'にフォローされました'];
   const timeoutIds = [];
   let delay = 3000;
   // const sigmoid = (x) => {
@@ -190,6 +237,10 @@ const TimeDisplay = () => {
   )
 };
 
+const ProfileImage = () => (
+  <img src={profileImage} alt="プロフィール画像" className="rounded-full w-14 h-14" />
+);
+
 const TwitterIcon = ({fill}) => (
   <svg viewBox="0 0 512 512">
     <path fill={fill} style={{fillRule: 'evenodd', clipRule: "evenodd"}} d='M496 109.5a201.8 201.8 0 01-56.55 15.3 97.51 97.51 0 0043.33-53.6 197.74 197.74 0 01-62.56 23.5A99.14 99.14 0 00348.31 64c-54.42 0-98.46 43.4-98.46 96.9a93.21 93.21 0 002.54 22.1 280.7 280.7 0 01-203-101.3A95.69 95.69 0 0036 130.4c0 33.6 17.53 63.3 44 80.7A97.5 97.5 0 0135.22 199v1.2c0 47 34 86.1 79 95a100.76 100.76 0 01-25.94 3.4 94.38 94.38 0 01-18.51-1.8c12.51 38.5 48.92 66.5 92.05 67.3A199.59 199.59 0 0139.5 405.6a203 203 0 01-23.5-1.4A278.68 278.68 0 00166.74 448c181.36 0 280.44-147.7 280.44-275.8 0-4.2-.11-8.4-.31-12.5A198.48 198.48 0 00496 109.5z'/>
@@ -212,32 +263,45 @@ const CameraIcon = ({fill}) => (
 );
 
 const App = () => {
-  const [modalMenu, setModalMenu] = useState(false);
+  const [tweetModal, setTweetModal] = useState(false);
   const [notificationList, setNotificationList] = useState([]);
   const [timeoutIdList, setTimeoutIdList] = useState([]);
 
   return (
     <React.Fragment>
       <div className="__bg-image"></div>
-      <ModalMenu show={modalMenu} setModalMenu={setModalMenu}/>
-      <Notifications notificationList={notificationList} setNotificationList={setNotificationList} timeoutIdList={timeoutIdList} />
+      <TweetModal show={tweetModal} setTweetModal={setTweetModal} setNotificationList={setNotificationList} setTimeoutIdList={setTimeoutIdList}/>
+      <Notifications
+        notificationList={notificationList}
+        setNotificationList={setNotificationList}
+        timeoutIdList={timeoutIdList}
+      />
       <div className="fixed left-0 w-full top-16">
         <div className="flex justify-center">
-          <button onClick={() => setModalMenu(true)}>
-            <div style={{ width: '1.4rem' }}>
-              <LockIcon fill="#fff" />
-            </div>
-          </button>
+          <div style={{ width: '1.4rem' }}>
+            <LockIcon fill="#fff" />
+          </div>
         </div>
       </div>
       <div className="fixed left-0 w-full px-12 bottom-10">
         <div className="flex justify-between max-w-screen-sm m-auto">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full __bg-blur">
-            <div style={{ width: '0.56rem' }}>
-              <FlashlightIcon fill="#fff" />
+          <button onClick={() => {
+            // let tweet = window.prompt('ツイートを入力してください');
+            // if (tweet) {
+            //   startNotifications({ tweet, setNotificationList, setTimeoutIdList });
+            // }
+            setTweetModal(true);
+          }}>
+            <div className="flex items-center justify-center w-12 h-12 rounded-full __bg-blur">
+              <div style={{ width: '0.56rem' }}>
+                <FlashlightIcon fill="#fff" />
+              </div>
             </div>
-          </div>
-          <button onClick={() => startNotifications({ setNotificationList, setTimeoutIdList })}>
+          </button>
+          <button onClick={() => {
+            let tweet = '申請書のチェックや評価書執筆の季節。学振の様式変更に少し戸惑っている。';
+            startNotifications({ tweet, setNotificationList, setTimeoutIdList });
+          }}>
             <div className="flex items-center justify-center w-12 h-12 rounded-full __bg-blur">
               <div style={{ width: '1.2rem' }}>
                 <CameraIcon fill="#fff" />
