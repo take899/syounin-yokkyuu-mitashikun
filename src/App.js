@@ -299,7 +299,7 @@ const App = () => {
             </div>
           </button>
           <button onClick={() => {
-            let tweet = '申請書のチェックや評価書執筆の季節。学振の様式変更に少し戸惑っている。';
+            let tweet = '小さい頃、よくツクシ取ってたけどあれって一体何なんだろう';
             startNotifications({ tweet, setNotificationList, setTimeoutIdList });
           }}>
             <div className="flex items-center justify-center w-12 h-12 rounded-full __bg-blur">
