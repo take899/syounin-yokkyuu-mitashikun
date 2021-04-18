@@ -156,7 +156,7 @@ const Notifications = ({ notificationList, setNotificationList, timeoutIdList })
                   </div>
                   <div className="text-black text-opacity-40">今</div>
                 </div>
-                  <div className="mt-3 font-extrabold">{notification.name}さん{notification.action}</div>
+                  <div className="mt-3 font-bold">{notification.name}さん{notification.action}</div>
                   <div className="font-thin">{notification.content}</div>
               </div>
             </div>
