@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/syounin-yokkyuu-mitashikun/static/css/main.6cd084cd.chunk.css",
+    "main.js": "/syounin-yokkyuu-mitashikun/static/js/main.b186fec3.chunk.js",
+    "main.js.map": "/syounin-yokkyuu-mitashikun/static/js/main.b186fec3.chunk.js.map",
+    "runtime-main.js": "/syounin-yokkyuu-mitashikun/static/js/runtime-main.c25bb793.js",
+    "runtime-main.js.map": "/syounin-yokkyuu-mitashikun/static/js/runtime-main.c25bb793.js.map",
+    "static/js/2.363e11a9.chunk.js": "/syounin-yokkyuu-mitashikun/static/js/2.363e11a9.chunk.js",
+    "static/js/2.363e11a9.chunk.js.map": "/syounin-yokkyuu-mitashikun/static/js/2.363e11a9.chunk.js.map",
+    "static/js/3.60ceaf2a.chunk.js": "/syounin-yokkyuu-mitashikun/static/js/3.60ceaf2a.chunk.js",
+    "static/js/3.60ceaf2a.chunk.js.map": "/syounin-yokkyuu-mitashikun/static/js/3.60ceaf2a.chunk.js.map",
+    "index.html": "/syounin-yokkyuu-mitashikun/index.html",
+    "static/css/main.6cd084cd.chunk.css.map": "/syounin-yokkyuu-mitashikun/static/css/main.6cd084cd.chunk.css.map",
+    "static/js/2.363e11a9.chunk.js.LICENSE.txt": "/syounin-yokkyuu-mitashikun/static/js/2.363e11a9.chunk.js.LICENSE.txt",
+    "static/media/App.css": "/syounin-yokkyuu-mitashikun/static/media/background.9cf492d1.jpg",
+    "static/media/gorilla.ebbeae54.jpg": "/syounin-yokkyuu-mitashikun/static/media/gorilla.ebbeae54.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.c25bb793.js",
+    "static/js/2.363e11a9.chunk.js",
+    "static/css/main.6cd084cd.chunk.css",
+    "static/js/main.b186fec3.chunk.js"
+  ]
+}
