@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import uuid from 'uuid';
-import profileImage from './images/gorilla.jpg';
+import profileImage from './images/profile-icon.png';
 import './App.css';
 
 const ModalMenu = ({ show, setModalMenu }) => (
@@ -238,7 +238,7 @@ const TimeDisplay = () => {
 };
 
 const ProfileImage = () => (
-  <img src={profileImage} alt="プロフィール画像" className="rounded-full w-14 h-14" />
+  <img src={profileImage} alt="プロフィール画像" className="border-4 border-blue-200 rounded-full w-14 h-14" />
 );
 
 const TwitterIcon = ({fill}) => (
